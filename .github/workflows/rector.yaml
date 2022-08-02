@@ -8,19 +8,14 @@ on:
       - main
 
 jobs:
-  tests:
+  rector-ci:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        php: ['8.0']
-
-    name: PHP ${{ matrix.php }} tests
     steps:
-      # basically git clone
       -   uses: actions/checkout@v2
-
-      # use PHP of specific version
-      -   uses: shivammathur/setup-php@v1
-          with:
-            php-version: ${{ matrix.php }}
-            coverage: none # disable xdebug, pcov
+      -
+        uses: shivammathur/setup-php@v1
+        with:
+          php-version: 7.3
+          coverage: none # disable xdebug, pcov
+      -   run: composer install --no-progress
+      -   run: bin/rector process --config rector-ci.yaml --dry-run --ansi
